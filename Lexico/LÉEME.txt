@@ -1,0 +1,5 @@
+Se debe pegar la carpeta llamada Tafac en la raíz de disco C
+O sea su ruta sería: "C:\\Tafac\\
+
+Para ejecutar el proyecto se usó la versión más reciente de NetBeans (Apache NetBeans 21)
+Se debe correr el scanner.java para ejecutar el scanner

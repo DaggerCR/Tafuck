@@ -1,0 +1,5 @@
+com\mycompany\lexico\Lexico.class
+com\mycompany\lexico\TipoToken.class
+com\mycompany\lexico\TokenHTML.class
+com\mycompany\lexico\Scanner.class
+com\mycompany\lexico\Token.class
