@@ -1,0 +1,15 @@
+nhequéquequé miPrograma;
+
+##apertura de sección de constantes: octará
+octará 
+
+	arrá  x1 45;
+	arrá  x2 77.5;
+	
+##apertura de sección de tipos: aíca
+aíca 
+
+	## putú es una instrucción prefija que declara el tipo Edad con un valor entero (chátené)
+	putú Edad chátené;
+	putú Nombre ílo;
+	putú hijos coyé;
