@@ -19,6 +19,27 @@ import java.util.List;
 import java.util.Map;
 
 public class Scanner {
+
+    // función principal que ejectuta todo el Scanner
+    // sirve para ser llamada desde otras clases
+    public static Token[] scan() {
+        List<Token> tokens = new ArrayList<>();
+        try {
+            Scanner scanner = new Scanner(archivoTaf);
+            Token token;
+            do {
+                token = scanner.demeToken();
+                Token tokenObj = new Token(token.getTipo(),token.getLexema(),token.getLinea(),token.getColumna()); 
+                tokens.add(tokenObj);
+            } while (token.getTipo() != TipoToken.EOF);
+            scanner.finalizeScanner();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return tokens.toArray(new Token[0]);
+    }
+    
+    
     private BufferedReader reader;
     private char currentChar;
     private int currentLine = 1;
@@ -64,7 +85,7 @@ public class Scanner {
     }
 
     // la función gordita que lee cada token, lo clasifica y los cuenta
-    private Token demeToken() throws IOException 
+    public Token demeToken() throws IOException 
     {
         saltaEspacios();
         StringBuilder lexema = new StringBuilder();
@@ -364,7 +385,7 @@ public class Scanner {
             do {
                 token = scanner.tomeToken();
                 tokensHTML.add(new TokenHTML(token.getLexema(), token.getLinea(), token.getColumna(), token.getTipo().toString()));
-                System.out.println(token);
+                System.out.println("Tipo: " +token.getTipo() + "  Lexema: " +token.getLexema() + "  Linea:" + token.getLinea() + "  Columna:" + token.getColumna());
             } while (token.getTipo() != TipoToken.EOF);
             scanner.finalizeScanner();
             int errores = scanner.obtenerNumeroErrores();

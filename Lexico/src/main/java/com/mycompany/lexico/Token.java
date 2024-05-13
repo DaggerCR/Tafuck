@@ -30,8 +30,8 @@ public class Token {
         return columna;
     }
 
-    @Override
-    public String toString() 
+    //@Override
+    public String toString2() 
     {
         return "Token: " +
                 "tipo=" + tipo +
