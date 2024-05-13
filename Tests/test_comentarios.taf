@@ -1,0 +1,53 @@
+~#
+Archivo para probar el parser
+Prueba que los comentarios sean correctamente detectados
+#~
+
+~#
+este es un comentario multilinea
+1 + 1
+chátené
+x:=2;
+#~
+
+##comentario de una linea
+## otro comentario de una linea
+
+
+~#
+comentario multilinea sin cerrar
+debe dar error
+
+purú
+
+## función principal, esto es inventado pero no tiene nada incorrecto
+macorróca chátené main
+cojcoj
+	chátené contador nicó 10;    ## int contador = 10;
+	chátené aumentador nicó 0;   ## int contador = 0;
+	
+	##ejemplo de un while
+	ótacá contador >= 0 sóta ## while(contador >= 5) do 
+	cojcoj
+		contador jené; 		## esto es un contador--
+		aumentador taqué; 	## esto es un aumentador++
+		taráne				## continue (no es obligatorio)
+	fuchí
+	
+    ~#
+    comentario multilinea en el main
+    1+1;
+    #~
+	
+	##ejemplo de if-then-else
+	arú aumentador > 5 nocófa	## if (aumentador > 5) then
+	cojcoj
+		aumentador := 0; 
+		contador := 0;
+	fuchí
+	tiáfa						## else
+	cojcoj
+		aumentador := 5;
+		contador := 5;
+	fuchí 
+fuchí ##cierra el main

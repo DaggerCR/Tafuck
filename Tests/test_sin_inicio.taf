@@ -1,0 +1,63 @@
+~#
+Archivo para probar el parser
+Prueba la sintaxis de inicio de progra
+Si tiene el iniciador del programa pero no tiene el nombre
+Deberia dar mensaje de error
+#~
+##apertura de sección de constantes: octará
+octará 
+	arrá x1 45;
+
+##apertura de sección de tipos: aíca
+aíca 
+
+	putú Edad chátené;
+
+##apertura de sección de variables: tilhtilh
+tilhtilh
+
+	##chátené es tipo entero y nicó su asignación, esto se leería en C como int x4 = 23;
+	chátené x4 nicó 23;
+	
+## sección de prototipos (se refiere a la declaración de funciones antes de que se hagan sus implementaciones, o sea todo el cuerpo de la función)
+chá 
+	##macorróca es el encabezado de la función, como el def en python 
+	macorróca chátené fibonacci (chátené N);
+
+
+## sección de rutinas (funciones y procedimientos): purú
+purú 	
+
+macorróca afá esUnaVocal (malhióca Letra)
+cojcoj					## se puede interpretar como {
+        torré Letra 	## torré es switch  
+        cojcoj
+             ári 'a' :	## ári es el case
+             ári 'e' :
+             ári 'i' : 
+             ári 'o' :
+             ári 'u' : 
+				jalac tócu; ## jalac es return, o sea esto es un return true
+                foróforóye; ## este es el break
+             mailhíco: 		## este es el default  
+				jalac maíca;## return false 
+        fuchí  
+fuchí					##fuchí es como }
+
+
+## función principal, esto es inventado pero no tiene nada incorrecto
+macorróca chátené main
+cojcoj
+	chátené contador nicó 10;    ## int contador = 10;
+	chátené aumentador nicó 0;   ## int contador = 0;
+	
+	##ejemplo de un while
+	ótacá contador >= 0 sóta ## while(contador >= 5) do 
+	cojcoj
+		contador jené; 		## esto es un contador--
+		aumentador taqué; 	## esto es un aumentador++
+		taráne				## continue (no es obligatorio)
+	fuchí
+	
+	
+fuchí ##cierra el main

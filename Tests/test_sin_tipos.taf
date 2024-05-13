@@ -1,0 +1,110 @@
+~#
+Archivo para probar el parser
+Prueba la estructura sintactica general del programa
+Hace falta la seccion de tipos
+Al esta ser opcional, no deberia retornar un mensaje de error
+#~
+
+nhequéquequé sin_tipos;
+
+
+##apertura de sección de constantes: octará
+octará 
+
+	## arrá instrucción prefija que declara x1 como constante, en esta sección no se pone el tipo
+	arrá x1 45;
+	arrá x2 'd';
+	arrá x3 maíca; ##maica es False
+
+
+##apertura de sección de variables: tilhtilh
+tilhtilh
+
+	##chátené es tipo entero y nicó su asignación, esto se leería en C como int x4 = 23;
+	chátené x4 nicó 23;
+	coyé chátené x5 ta 10; 				## esto declara un arreglo (coýe) de tipo entero (chátené) y de tamaño (ta) 10
+	ílo x6 nicó "Esto es un string";	## ílo es el tipo string
+	afá x7 nicó tócu; 					## afá es tipo booleano y tócu es True
+
+	##Esto es el equivalente de un Struct en C 
+	porétecá    			 	## con poréteca lo inicializo 	
+		chátené campo1;        	## Los campos de un record no se pueden inicializar independientemente, debe ser con la literal de records...
+		malhióca campo2;       	## ...luego del nicó
+		ílo campo3;             
+		afá campo4;
+    turé X nicó .... ;        	## con turé lo cierro
+	
+## sección de prototipos (se refiere a la declaración de funciones antes de que se hagan sus implementaciones, o sea todo el cuerpo de la función)
+chá 
+	##macorróca es el encabezado de la función, como el def en python 
+	macorróca chátené fibonacci (chátené N);
+	óri factorial (chátené N, suí chátené Resp); 	## óri es igual que macorróca pero para procedimientos
+	macorróca afá esUnaVocal (malhióca Letra); 		## malhióca es el tipo caracter (char)
+
+
+## sección de rutinas (funciones y procedimientos): purú
+purú 	
+
+macorróca afá esUnaVocal (malhióca Letra)
+cojcoj					## se puede interpretar como {
+        torré Letra 	## torré es switch  
+        cojcoj
+             ári 'a' :	## ári es el case
+             ári 'e' :
+             ári 'i' : 
+             ári 'o' :
+             ári 'u' : 
+				jalac tócu; ## jalac es return, o sea esto es un return true
+                foróforóye; ## este es el break
+             mailhíco: 		## este es el default  
+				jalac maíca;## return false 
+        fuchí  
+fuchí					##fuchí es como }
+
+
+## función principal, esto es inventado pero no tiene nada incorrecto
+macorróca chátené main
+cojcoj
+	chátené contador nicó 10;    ## int contador = 10;
+	chátené aumentador nicó 0;   ## int contador = 0;
+	
+	##ejemplo de un while
+	ótacá contador >= 0 sóta ## while(contador >= 5) do 
+	cojcoj
+		contador jené; 		## esto es un contador--
+		aumentador taqué; 	## esto es un aumentador++
+		taráne				## continue (no es obligatorio)
+	fuchí
+	
+	
+	##ejemplo de if-then-else
+	arú aumentador > 5 nocófa	## if (aumentador > 5) then
+	cojcoj
+		aumentador := 0; 
+		contador := 0;
+	fuchí
+	tiáfa						## else
+	cojcoj
+		aumentador := 5;
+		contador := 5;
+	fuchí 
+	
+	
+	## Ejemplo de repeat-until
+	paípaí	## do
+		aumentador += 1;
+	yája aumentador < 10; ## while 	
+	
+	
+	##ejemplo de un for
+	ajá chátené i := 5 Iha i >= 0 telele i jené sóta ## for(int x = 5; i>=; i--) do
+	cojcoj				## el cojcoj al igual que el {} en C solo es necesesario cuando hay más de una instrucción
+		pítechátené i; 	## píte es salida estandar o sea estamos haciendo un print(i); de tipo entero (chátené)
+		íca i;			## sizeof de i
+	fuchí
+	
+	
+
+	
+	lauc; ##instrucción halt (es como un break pero a todo el programa)
+fuchí ##cierra el main

@@ -1,0 +1,48 @@
+~#
+Archivo para probar el parser
+Hace falta la seccion de rutinas
+Al esta ser opcional, no deberia retornar un mensaje de error
+#~
+
+nhequéquequé;
+
+##apertura de sección de constantes: octará
+octará 
+
+	## arrá instrucción prefija que declara x1 como constante, en esta sección no se pone el tipo
+	arrá x1 45;
+	arrá x2 'd';
+	arrá x3 maíca; ##maica es False
+
+	
+##apertura de sección de tipos: aíca
+aíca 
+
+	## putú es una instrucción prefija que declara el tipo Edad con un valor entero (chátené)
+	putú Edad chátené;
+
+##apertura de sección de variables: tilhtilh
+tilhtilh
+
+	##chátené es tipo entero y nicó su asignación, esto se leería en C como int x4 = 23;
+	chátené x4 nicó 23;
+	coyé chátené x5 ta 10; 				## esto declara un arreglo (coýe) de tipo entero (chátené) y de tamaño (ta) 10
+	ílo x6 nicó "Esto es un string";	## ílo es el tipo string
+	afá x7 nicó tócu; 					## afá es tipo booleano y tócu es True
+
+	##Esto es el equivalente de un Struct en C 
+	porétecá    			 	## con poréteca lo inicializo 	
+		chátené campo1;        	## Los campos de un record no se pueden inicializar independientemente, debe ser con la literal de records...
+		malhióca campo2;       	## ...luego del nicó
+		ílo campo3;             
+		afá campo4;
+    turé X nicó .... ;        	## con turé lo cierro
+	
+## sección de prototipos (se refiere a la declaración de funciones antes de que se hagan sus implementaciones, o sea todo el cuerpo de la función)
+chá 
+	##macorróca es el encabezado de la función, como el def en python 
+	macorróca chátené fibonacci (chátené N);
+	óri factorial (chátené N, suí chátené Resp); 	## óri es igual que macorróca pero para procedimientos
+	macorróca afá esUnaVocal (malhióca Letra); 		## malhióca es el tipo caracter (char)
+
+
