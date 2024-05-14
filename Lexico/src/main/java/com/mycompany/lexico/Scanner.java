@@ -45,7 +45,7 @@ public class Scanner {
     private int currentLine = 1;
     private int currentColumn = 0;
     private int errorCount = 0;
-    private static String archivoTaf = "C:\\Tafac\\test.taf"; //super importante de asegurarse que exista
+    private static String archivoTaf = "C:\\Tafac\\test2.taf"; //super importante de asegurarse que exista
     private static String archivoHTML = "C:\\Tafac\\tokens.html"; // esto también, pero el tokens.html no es obligatorio que esté en la carpeta, ya que se genera cuando se compila
     private int tipoCount = 0;
     private int tokensCount = 0;
@@ -292,6 +292,10 @@ public class Scanner {
                     case ";" ->
                     {  
                          return new Token(TipoToken.TERMINADOR, lexemaStr, line, column);
+                    }
+                    case "," ->
+                    {  
+                         return new Token(TipoToken.COMA, lexemaStr, line, column);
                     }
                     case "##" ->
                     {

@@ -41,5 +41,6 @@ public enum TipoToken {
     SIZEOF,
     COHERCION,
     COMENTARIO,
+    COMA,
     
 }

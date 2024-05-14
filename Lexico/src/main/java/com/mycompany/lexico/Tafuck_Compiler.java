@@ -11,10 +11,11 @@ public class Tafuck_Compiler {
     // solo para consulta en consola
     private static void ver_Scanner()
     {
+        // Scanner.scan() ejecuta el Scanner y 
         Token[] tokens = Scanner.scan();
         for (Token token : tokens) 
         {
-        System.out.println("Token: " +
+            System.out.println("Token: " +
                 "tipo =" + token.getTipo() +
                 ", lexema ='" + token.getLexema() + '\'' +
                 ", linea =" + token.getLinea() +

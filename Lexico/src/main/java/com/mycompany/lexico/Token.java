@@ -1,13 +1,15 @@
 
 package com.mycompany.lexico;
 
-public class Token {
+public class Token 
+{
     private TipoToken tipo;
     private String lexema;
     private int linea;
     private int columna;
 
-    public Token(TipoToken tipo, String lexema, int linea, int columna) {
+    public Token(TipoToken tipo, String lexema, int linea, int columna) 
+    {
         this.tipo = tipo;
         this.lexema = lexema;
         this.linea = linea;
@@ -16,6 +18,10 @@ public class Token {
 
     public TipoToken getTipo() {
         return tipo;
+    }
+    
+    public String getTipoString() {
+        return tipo.toString();
     }
 
     public String getLexema() {
