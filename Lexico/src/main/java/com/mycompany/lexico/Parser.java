@@ -252,65 +252,90 @@ public class Parser {
             return predictSet;
         }
     }
-
-    public static void parse(Token[] tokens, PredictiveParsingTable table, Map<String, List<List<String>>> grammar) 
+    
+    public static void printPredictiveParsingTable(PredictiveParsingTable table) 
     {
-        Stack<String> parsingStack = new Stack<>();
-        parsingStack.push("<S>"); // Símbolo inicial en la pila
-
-        int tokenIndex = 0; // Índice para recorrer los tokens
-
-        while (!parsingStack.isEmpty() && tokenIndex < tokens.length) {
-            String stackTop = parsingStack.pop(); // Obtener el elemento superior de la pila
-            System.out.println("Analizando token: " + tokens[tokenIndex].getTipoString() + "con Lexema: "+ tokens[tokenIndex].getLexema()  + ". Simbolo actual en la pila: " + stackTop);
-
-            if (grammar.containsKey(stackTop)) 
+        for (String nonTerminal : table.table.keySet()) 
+        {
+            System.out.println("Producciones para no terminal '" + nonTerminal + "':");
+            Map<String, Integer> productionMap = table.table.get(nonTerminal);
+            for (Map.Entry<String, Integer> entry : productionMap.entrySet()) 
             {
-                System.out.println("Se encontro la llave: " + stackTop);
-                System.out.println("Tipo Token a analizar: " + tokens[tokenIndex].getTipoString());
-                
-                // Si el elemento es un no terminal, buscar en la tabla de análisis predictivo
-                int productionNumber = table.getProductionNumber(stackTop, tokens[tokenIndex].getTipoString());
-                if (productionNumber == -1) 
-                {
-                    // Error: no se encontró una producción para el no terminal y el token actual
-                    System.out.println("Error sintactico en fila " + tokens[tokenIndex].getLinea() +
-                            ", columna " + tokens[tokenIndex].getColumna() +
-                            ": No se encontro una producción para " + stackTop + " y " +
-                            tokens[tokenIndex].getTipoString());
-                    return;
-                } else {
-                    // Obtener la producción correspondiente y agregar los símbolos a la pila
-                    List<String> production = grammar.get(stackTop).get(productionNumber - 1); // Restamos 1 porque la numeración de las producciones comienza desde 1
-                    for (int i = production.size() - 1; i >= 0; i--) {
-                        if (!production.get(i).equals("epsilon")) {
-                            parsingStack.push(production.get(i));
+                System.out.println("\t" + entry.getKey() + " -> " + entry.getValue());
+            }
+        }
+    }   
+
+    public static void parse(Token[] tokens, PredictiveParsingTable table, Map<String, List<List<String>>> grammar) {
+    Stack<String> parsingStack = new Stack<>();
+    parsingStack.push("<S>"); // Símbolo inicial en la pila
+
+    int tokenIndex = 0; // Índice para recorrer los tokens
+
+    while (!parsingStack.isEmpty() && tokenIndex < tokens.length) {
+        String stackTop = parsingStack.pop(); // Obtener el elemento superior de la pila
+        System.out.println("Analizando token: " + tokens[tokenIndex].getTipoString() + " con Lexema: " + tokens[tokenIndex].getLexema() + ". Simbolo actual en la pila: " + stackTop);
+
+        if (grammar.containsKey(stackTop)) 
+        {
+            // Si el elemento es un no terminal, buscar en la tabla de análisis predictivo
+            int productionNumber = table.getProductionNumber(stackTop, tokens[tokenIndex].getTipoString());
+            if (productionNumber == -1) 
+            {
+                // Error: no se encontró una producción para el no terminal y el token actual
+                System.out.println("Error sintactico en fila " + tokens[tokenIndex].getLinea() +
+                        ", columna " + tokens[tokenIndex].getColumna() +
+                        ": No se encontro una producción para " + stackTop + " y " +
+                        tokens[tokenIndex].getTipoString());
+                return;
+            } else {
+                // Obtener la producción correspondiente y agregar los símbolos a la pila
+                List<String> production = grammar.get(stackTop).get(productionNumber - 1); // Restamos 1 porque la numeración de las producciones comienza desde 1
+                // Procesar la producción
+                for (int i = production.size() - 1; i >= 0; i--) {
+                    String symbol = production.get(i);
+                    if (grammar.containsKey(symbol)) {
+                        // Si el símbolo es un no terminal, agregarlo a la pila
+                        parsingStack.push(symbol);
+                    } else {
+                        // Si el símbolo es un terminal, compararlo con el tipo de token actual
+                        String terminal = tokens[tokenIndex].getTipoString();
+                        if (symbol.equals(terminal) || (symbol.equals("IDENTIFICADOR") && terminal.equals("IDENTIFICADOR"))) {
+                            // Coincidencia: avanzar al siguiente token
+                            tokenIndex++;
+                        } else {
+                            // Error: el terminal en la pila no coincide con el tipo de token actual
+                            System.out.println("Error sintáctico en fila " + tokens[tokenIndex].getLinea() +
+                                    ", columna " + tokens[tokenIndex].getColumna() +
+                                    ": Se esperaba " + symbol + " y se recibio " + terminal);
+                            return;
                         }
                     }
                 }
+            }
+        } else {
+            // Si el elemento es un terminal, compararlo con el tipo de token actual
+            String terminal = tokens[tokenIndex].getTipoString();
+            if (stackTop.equals(terminal) || (stackTop.equals("IDENTIFICADOR") && terminal.equals("IDENTIFICADOR"))) {
+                // Coincidencia: avanzar al siguiente token
+                tokenIndex++;
             } else {
-                // Si el elemento es un terminal, compararlo con el tipo de token actual
-                String terminal = tokens[tokenIndex].getTipoString(); // Cambio aquí a getTipoString()
-                if (stackTop.equals(terminal) || (stackTop.equals("IDENTIFICADOR") && terminal.equals("IDENTIFICADOR"))) {
-                    // Coincidencia: avanzar al siguiente token
-                    tokenIndex++;
-                } else {
-                    // Error: el terminal en la pila no coincide con el tipo de token actual
-                    System.out.println("Error sintáctico en fila " + tokens[tokenIndex].getLinea() +
-                            ", columna " + tokens[tokenIndex].getColumna() +
-                            ": Se esperaba " + stackTop + " y se recibio " + terminal);
-                    return;
-                }
+                // Error: el terminal en la pila no coincide con el tipo de token actual
+                System.out.println("Error sintáctico en fila " + tokens[tokenIndex].getLinea() +
+                        ", columna " + tokens[tokenIndex].getColumna() +
+                        ": Se esperaba " + stackTop + " y se recibio " + terminal);
+                return;
             }
         }
-
-        // Verificar si se llegó al final de la cadena de tokens
-        if (tokenIndex != tokens.length) {
-            System.out.println("Error sintactico: fin de archivo inesperado");
-        } else {
-            System.out.println("Analisis sintactico exitoso");
-        }
     }
+
+    // Verificar si se llegó al final de la cadena de tokens
+    if (tokenIndex != tokens.length) {
+        System.out.println("Error sintactico: fin de archivo inesperado");
+    } else {
+        System.out.println("Analisis sintactico exitoso");
+    }
+}
     
     
     public static void main(String[] args) {
@@ -321,11 +346,13 @@ public class Parser {
         // Definimos el mapa que tendrá toda la gramática
         Map<String, List<List<String>>> grammar = new HashMap<>();
 
-        // tabla de predicciones
+        // creamos la tabla de tabla de predicciones
         PredictiveParsingTable table = new PredictiveParsingTable();
 
-        // Aquí van todas las reglas gramaticales
-        // Reglas gramaticales para la asignación de constantes
+        
+// ----------Aquí van todas las reglas gramaticales------------
+        
+// Reglas gramaticales para la asignación de constantes        
         grammar.put("<S>", Arrays.asList(
                 Arrays.asList("arrá", "<loop-constantes>")
         ));
@@ -338,12 +365,47 @@ public class Parser {
                 Arrays.asList("LITERAL_BOOLEANA"),
                 Arrays.asList("LITERAL_ENTERA")
         ));
+  
+        // imprimir TP
+        printPredictiveParsingTable(table);
 
+//Gramática de Sección de rutinas
+        grammar.put("<S>", Arrays.asList(
+                Arrays.asList("purú","<expresion-rutina>"),
+                Arrays.asList("<expresion-rutina>","macorróca","IDENTIFICADOR","TERMINADOR")
+        ));
+       
         
+//Sección de prototipos
+        grammar.put("<S>", Arrays.asList(
+                Arrays.asList("chá","<declaracion-funcion>")
+        ));
+        
+//Sección de constantes
+        grammar.put("<S>", Arrays.asList(
+                Arrays.asList("<sección-constante>"),
+                Arrays.asList("<sección-constante>","octará","<loop-definicion-constantes>"),
+                Arrays.asList("<sección-constante>","epsilon"),
+                Arrays.asList("<loop-definicion-constantes>","<asignacion-constante>", "<loop-definicion-constante>"),
+                Arrays.asList("<loop-definicion-constantes>", "<asignacion-constante>")
+                ));
+//Sección de tipos
+        grammar.put("<S>",Arrays.asList(
+                Arrays.asList("<sección-tipo>","aíca", "<loop-definición-tipo>"),
+                Arrays.asList("epsilon"),
+                Arrays.asList("<loop-definición-tipo>","putú", "IDENTIFICADOR", "<tipo-dato>", "TERMINADOR", "<loop-definición-tipo>"),
+                Arrays.asList("putú", "IDENTIFICADOR", "<tipo-dato>", "TERMINADOR")
+        ));
+
+//----------Fin de las gramática-----------
         // Llenar la tabla de parsing
         table.fillTable(grammar);
+        
+        // Imprimir la tabla
+        printPredictiveParsingTable(table);
 
-        // Llamar al parser
+
+        // Llamar al parser (método principal)
         parse(tokens, table, grammar);
     }
 }
