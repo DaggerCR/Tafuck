@@ -1,5 +1,7 @@
 package com.mycompany.lexico;
 
+import java.util.List;
+
 public class Tafuck_Compiler {
     public static void main(String[] args) 
     {
@@ -12,15 +14,15 @@ public class Tafuck_Compiler {
     private static void ver_Scanner()
     {
         // Scanner.scan() ejecuta el Scanner y 
-        Token[] tokens = Scanner.scan();
-        for (Token token : tokens) 
-        {
-            System.out.println("Token: " +
-                "tipo =" + token.getTipo() +
-                ", lexema ='" + token.getLexema() + '\'' +
-                ", linea =" + token.getLinea() +
-                ", columna =" + token.getColumna());
+        List<Token> tokens = Scanner.scan();
+        
+        System.out.print("\n-------Lista de tokens-------\n"); 
+        
+        for (int i = 0; i < tokens.size(); i++) {
+            Token token = tokens.get(i);
+            System.out.println("Tipo: " + token.getTipoString() + "  Lexema: "+ token.getLexema() + "   Fila: " + token.getLinea() + "   Columna: " + token.getColumna());
         }
+        System.out.print("\n------- Fi de la lista de tokens-------");
     }
     
 }

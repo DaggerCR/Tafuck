@@ -22,7 +22,7 @@ public class Scanner {
 
     // función principal que ejectuta todo el Scanner
     // sirve para ser llamada desde otras clases
-    public static Token[] scan() {
+    public static List<Token> scan() {
         List<Token> tokens = new ArrayList<>();
         try {
             Scanner scanner = new Scanner(archivoTaf);
@@ -36,7 +36,7 @@ public class Scanner {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return tokens.toArray(new Token[0]);
+        return tokens;
     }
     
     
@@ -45,7 +45,7 @@ public class Scanner {
     private int currentLine = 1;
     private int currentColumn = 0;
     private int errorCount = 0;
-    private static String archivoTaf = "C:\\Tafac\\test2.taf"; //super importante de asegurarse que exista
+    private static String archivoTaf = "C:\\Tafac\\test_seccion_constantes.taf"; //super importante de asegurarse que exista
     private static String archivoHTML = "C:\\Tafac\\tokens.html"; // esto también, pero el tokens.html no es obligatorio que esté en la carpeta, ya que se genera cuando se compila
     private int tipoCount = 0;
     private int tokensCount = 0;

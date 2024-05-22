@@ -341,7 +341,7 @@ public class Parser {
     public static void main(String[] args) {
         System.out.print("\n\n\n\n");
         // Obtener los tokens
-        Token[] tokens = Scanner.scan();
+        List<Token> tokens = Scanner.scan();
 
         // Definimos el mapa que tendrá toda la gramática
         Map<String, List<List<String>>> grammar = new HashMap<>();
@@ -406,6 +406,6 @@ public class Parser {
 
 
         // Llamar al parser (método principal)
-        parse(tokens, table, grammar);
+        //parse(tokens, table, grammar);
     }
 }
