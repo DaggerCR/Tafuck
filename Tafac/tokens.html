@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+font-family: Arial, sans-serif;
+border-collapse: collapse;
+width: 100%;
+}
+
+th, td {
+border: 1px solid #dddddd;
+text-align: left;
+padding: 8px;
+}
+
+th {
+background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+<h2>Tokens</h2>
+<table>
+<tr><th>Lexema</th><th>Fila</th><th>Columna</th><th>Tipo</th></tr>
+<tr><td>octará</td><td>2</td><td>1</td><td>SECCION</td></tr>
+<tr><td>arrá</td><td>3</td><td>2</td><td>ASIGNACION</td></tr>
+<tr><td>x1</td><td>3</td><td>7</td><td>IDENTIFICADOR</td></tr>
+<tr><td>45.1</td><td>3</td><td>10</td><td>LITERAL_FLOTANTE</td></tr>
+<tr><td>;</td><td>3</td><td>14</td><td>TERMINADOR</td></tr>
+<tr><td>aíca</td><td>7</td><td>1</td><td>SECCION</td></tr>
+<tr><td>putú</td><td>8</td><td>5</td><td>ASIGNACION</td></tr>
+<tr><td>Edad</td><td>8</td><td>10</td><td>IDENTIFICADOR</td></tr>
+<tr><td>chátené</td><td>8</td><td>15</td><td>TIPO_DATO</td></tr>
+<tr><td>;</td><td>8</td><td>22</td><td>TERMINADOR</td></tr>
+<tr><td></td><td>10</td><td>1</td><td>EOF</td></tr>
+</table>
+<h2>Contador de Tokens</h2>
+<ul>
+<li>TERMINADOR: 2</li>
+<li>LITERAL_FLOTANTE: 1</li>
+<li>SECCION: 2</li>
+<li>TIPO_DATO: 1</li>
+<li>ASIGNACION: 2</li>
+<li>IDENTIFICADOR: 2</li>
+<li>EOF: 1</li>
+</ul>
+</body>
+</html>

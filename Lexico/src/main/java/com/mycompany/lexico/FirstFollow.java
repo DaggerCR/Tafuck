@@ -22,13 +22,16 @@ public class FirstFollow {
         boolean changed;
         do {
             changed = false;
-            for (Producción production : grammar.getProductions()) {
+            for (Producción production : grammar.getProductions()) 
+            {
+                System.out.print("X");
                 String nonTerminal = production.getNoTerminal();
                 List<String> sequence = production.getSecuencia();
 
                 int initialSize = firstSets.get(nonTerminal).size();
                 firstSets.get(nonTerminal).addAll(first(sequence));
-                if (firstSets.get(nonTerminal).size() > initialSize) {
+                if (firstSets.get(nonTerminal).size() > initialSize) 
+                {
                     changed = true;
                 }
             }

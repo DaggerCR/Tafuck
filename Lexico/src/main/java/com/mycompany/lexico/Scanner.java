@@ -45,7 +45,7 @@ public class Scanner {
     private int currentLine = 1;
     private int currentColumn = 0;
     private int errorCount = 0;
-    private static String archivoTaf = "C:\\Tafac\\test_seccion_constantes.taf"; //super importante de asegurarse que exista
+    private static String archivoTaf = "C:\\Tafac\\miPrograma.taf"; //super importante de asegurarse que exista
     private static String archivoHTML = "C:\\Tafac\\tokens.html"; // esto también, pero el tokens.html no es obligatorio que esté en la carpeta, ya que se genera cuando se compila
     private int tipoCount = 0;
     private int tokensCount = 0;
@@ -393,10 +393,13 @@ public class Scanner {
             } while (token.getTipo() != TipoToken.EOF);
             scanner.finalizeScanner();
             int errores = scanner.obtenerNumeroErrores();
-            if (errores == 0) {
-                System.out.println("\nCompilacion correcta.");
+            if (errores == 0) 
+            {
+                System.out.println("\n|-------------------------------------|");
+                System.out.println("|Analisis lexico correcto, sin errores|");
+                System.out.println("|-------------------------------------|\n");
             } else {
-                System.out.println("\nSe encontraron " + errores + " errores durante la compilacion.");
+                System.out.println("\nSe encontraron " + errores + " errores durante la compilacion del analisis lexico.");
             }
             scanner.escribirTokensHTML(tokensHTML);
         } catch (IOException e) {
