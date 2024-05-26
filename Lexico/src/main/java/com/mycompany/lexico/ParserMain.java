@@ -5,6 +5,12 @@ import java.util.*;
 public class ParserMain {
     public static void main(String[] args) {
         // Definir la gramática
+        
+        // Nomenclatura:
+        // Si está entre <> es un NO terminal
+        // Si está en minuscula es un terminal y se espera leer el Lexema del token
+        // Si está en MAYUSCULA es un terminal y se espera leer el Tipo del token
+        
         Grammar grammar = new Grammar();
         grammar.setStartSymbol("<S>");
         
@@ -31,6 +37,26 @@ public class ParserMain {
         
         grammar.addTerminal("nhequéquequé");
 
+        //grammar.addNonTerminal("<>");
+        grammar.addTerminal(":= ");
+        grammar.addTerminal("+= ");
+        grammar.addTerminal("/= ");
+        grammar.addTerminal("*= ");
+        grammar.addTerminal("-= ");
+        grammar.addTerminal("ASIGNACION");
+        
+        grammar.addTerminal("% ");
+        grammar.addTerminal("+ ");
+        grammar.addTerminal("/ ");
+        grammar.addTerminal("* ");
+        grammar.addTerminal("- ");
+        grammar.addTerminal("OPERADOR_ENTERO");
+        
+        
+        
+        
+        
+        
         //nombre del programa
         grammar.addProduction("<S>", Arrays.asList("nhequéquequé","IDENTIFICADOR","TERMINADOR"));
         // Sección de constantes
@@ -45,10 +71,15 @@ public class ParserMain {
         grammar.addProduction("<S>", Arrays.asList("aíca","<loop-definicion>"));
         grammar.addProduction("<loop-definicion>", Arrays.asList("putú","IDENTIFICADOR","TIPO_DATO","TERMINADOR"));
         
-
         //sección de variables
         grammar.addProduction("<S>", Arrays.asList("tilhtilh","<seccion-variables>"));
         grammar.addProduction("<seccion-variables>", Arrays.asList("TIPO_DATO","IDENTIFICADOR","nicó","<literal>","TERMINADOR"));
+        
+        //asiganaciones
+        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","ASIGNACION","<literal>"));
+        
+        //operador entero
+        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","OPERADOR_ENTERO","IDENTIFICADOR","TERMINADOR"));
 
 //----------------------------------------------------------
         // Calcular First y Follow
@@ -67,10 +98,12 @@ public class ParserMain {
         //obtiene los tokens del Scanner
         List<Token> tokensTrue = Scanner.scan();
 
-        // Crear el parser y ejecutar el análisis
+        // Crear el parser y ejecutar el análisis sintáctico
         Parser2 parser = new Parser2(tokensTrue, grammar.getProductions(), parsingTable, grammar);
         parser.parse();
 
+
+        
     }
 }
 

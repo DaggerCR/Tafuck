@@ -265,27 +265,30 @@ public class Scanner {
                      lexema.deleteCharAt(lexema.length() - 1);
                 }
                 String lexemaStr = lexema.toString();
+                System.out.print("\nLEXAMA NO ALPHADIGIT: '"+lexemaStr+"'\n");
                 // switch que clasifica el lexema en su tipo
+                
                 switch (lexemaStr) 
                 {
+                    
                     // Asignaciones
-                    case ":=","+=","/=","-=","*=" ->
+                    case ":= ","+= ","/= ","-= ","*= " ->
                     {
                         return new Token(TipoToken.ASIGNACION, lexemaStr, line, column);
                     }
-                    case "<<", ">>", "&?","#?" ->
+                    case "<< ", ">> ", "&? ","#? " ->
                     {
                         return new Token(TipoToken.OPERADOR_CHAR, lexemaStr, line, column);
                     }
-                    case "|++","++|","|+|","+|+" ->
+                    case "|++ ","++| ","|+| ","+|+ " ->
                     {
                         return new Token(TipoToken.OPERADOR_FLOTANTE, lexemaStr, line, column);
                     }
-                    case ">","<","=", ">=", "<=", "><" ->
+                    case "> ","< ","= ", ">= ", "<= ", ">< " ->
                     {
                         return new Token(TipoToken.OPERADOR_COMPARACION, lexemaStr, line, column);
                     }
-                    case "+", "-", "*", "%", "/" ->
+                    case "+ ", "- ", "* ", "% ", "/ " ->
                     {
                          return new Token(TipoToken.OPERADOR_ENTERO, lexemaStr, line, column);
                     }

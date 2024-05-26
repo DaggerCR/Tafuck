@@ -37,6 +37,7 @@ public class Parser2 {
         System.err.println("|------------------------------\n\n");
     }
 
+    // método principal que se encarga de hacer el análisis sintáctico
     public void parse() {
         pila.push("EOF");
         pila.push("<S>");
@@ -45,7 +46,7 @@ public class Parser2 {
         while (!pila.isEmpty()) 
         {
             System.out.print("---------------");
-            // si encuentra un ; se da por terminado la revisión de ese conjunto de tokens
+            // si encuentra un ; se da por terminado la revisión de ese conjunto de tokens y empiza a bucar reglas gramaticales nuevas
             if(tokenActual.getTipoString().equals("TERMINADOR"))
             {
                 pila.clear();
@@ -65,11 +66,11 @@ public class Parser2 {
                 } else {
                     System.out.println("\nSi es un terminal pero no hubo match");
                     errorSintactico(elementoActual, tokenActual);
-                    return;
+                    //return;
                 }
             } else {
                 
-                System.out.println("\nEs un NO terminal");
+                System.out.println("\nEs un NO terminal, se hace recorre la gramática");
                 List<Producción> posiblesProducciones = grammar.getProductionsForNonTerminal(elementoActual);
                 boolean matchFound = false;
 
