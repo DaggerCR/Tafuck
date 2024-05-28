@@ -265,7 +265,7 @@ public class Scanner {
                      lexema.deleteCharAt(lexema.length() - 1);
                 }
                 String lexemaStr = lexema.toString();
-                System.out.print("\nLEXAMA NO ALPHADIGIT: '"+lexemaStr+"'\n");
+                //System.out.print("\nLEXAMA NO ALPHADIGIT: '"+lexemaStr+"'\n");
                 // switch que clasifica el lexema en su tipo
                 
                 switch (lexemaStr) 

@@ -4,13 +4,6 @@ import java.util.*;
 
 public class ParserMain {
     public static void main(String[] args) {
-        // Definir la gramática
-        
-        // Nomenclatura:
-        // Si está entre <> es un NO terminal
-        // Si está en minuscula es un terminal y se espera leer el Lexema del token
-        // Si está en MAYUSCULA es un terminal y se espera leer el Tipo del token
-        
         Grammar grammar = new Grammar();
         grammar.setStartSymbol("<S>");
         
@@ -37,7 +30,6 @@ public class ParserMain {
         
         grammar.addTerminal("nhequéquequé");
 
-        //grammar.addNonTerminal("<>");
         grammar.addTerminal(":= ");
         grammar.addTerminal("+= ");
         grammar.addTerminal("/= ");
@@ -52,36 +44,30 @@ public class ParserMain {
         grammar.addTerminal("- ");
         grammar.addTerminal("OPERADOR_ENTERO");
         
+        grammar.addTerminal("EOF");
         
+        // Agregar producciones por familias
+        grammar.addProduction("programa", "<S>", Arrays.asList("nhequéquequé", "IDENTIFICADOR", "TERMINADOR"));
         
-        
-        
-        
-        //nombre del programa
-        grammar.addProduction("<S>", Arrays.asList("nhequéquequé","IDENTIFICADOR","TERMINADOR"));
-        // Sección de constantes
-        grammar.addProduction("<S>", Arrays.asList("octará","arrá","<loop-constantes>"));
-        //grammar.addProduction("<loop-constantes>", Arrays.asList("IDENTIFICADOR", "<literal>", "COMA", "<loop-constantes>"));
-        grammar.addProduction("<loop-constantes>", Arrays.asList("IDENTIFICADOR", "<literal>", "TERMINADOR"));
-        grammar.addProduction("<literal>", Arrays.asList("LITERAL_FLOTANTE"));
-        grammar.addProduction("<literal>", Arrays.asList("LITERAL_BOOLEANA"));
-        grammar.addProduction("<literal>", Arrays.asList("LITERAL_ENTERO"));
-        
-        //sección de tipos
-        grammar.addProduction("<S>", Arrays.asList("aíca","<loop-definicion>"));
-        grammar.addProduction("<loop-definicion>", Arrays.asList("putú","IDENTIFICADOR","TIPO_DATO","TERMINADOR"));
-        
-        //sección de variables
-        grammar.addProduction("<S>", Arrays.asList("tilhtilh","<seccion-variables>"));
-        grammar.addProduction("<seccion-variables>", Arrays.asList("TIPO_DATO","IDENTIFICADOR","nicó","<literal>","TERMINADOR"));
-        
-        //asiganaciones
-        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","ASIGNACION","<literal>"));
-        
-        //operador entero
-        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","OPERADOR_ENTERO","IDENTIFICADOR","TERMINADOR"));
+        grammar.addProduction("constantes", "<S>", Arrays.asList("octará", "arrá", "<loop-constantes>"));
+        grammar.addProduction("constantes", "<loop-constantes>", Arrays.asList("IDENTIFICADOR", "<literal>", "TERMINADOR"));
+        grammar.addProduction("constantes", "<literal>", Arrays.asList("LITERAL_FLOTANTE"));
+        grammar.addProduction("constantes", "<literal>", Arrays.asList("LITERAL_BOOLEANA"));
+        grammar.addProduction("constantes", "<literal>", Arrays.asList("LITERAL_ENTERO"));
 
-//----------------------------------------------------------
+        grammar.addProduction("tipos", "<S>", Arrays.asList("aíca", "<loop-definicion>"));
+        grammar.addProduction("tipos", "<loop-definicion>", Arrays.asList("putú", "IDENTIFICADOR", "TIPO_DATO", "TERMINADOR"));
+
+        grammar.addProduction("variables", "<S>", Arrays.asList("tilhtilh", "<seccion-variables>"));
+        grammar.addProduction("variables", "<seccion-variables>", Arrays.asList("TIPO_DATO", "IDENTIFICADOR", "nicó", "<literal>", "TERMINADOR"));
+
+        grammar.addProduction("asignaciones", "<S>", Arrays.asList("IDENTIFICADOR", "ASIGNACION", "<literal>"));
+
+        grammar.addProduction("operadores", "<S>", Arrays.asList("IDENTIFICADOR", "OPERADOR_ENTERO", "IDENTIFICADOR", "TERMINADOR"));
+        
+        grammar.addProduction("eof", "<S>", Arrays.asList("EOF"));
+
+        //----------------------------------------------------------
         // Calcular First y Follow
         FirstFollow firstFollowCalculator = new FirstFollow(grammar);
         firstFollowCalculator.calculateFirst();
@@ -95,15 +81,12 @@ public class ParserMain {
         ParsingTableBuilder parsingTableBuilder = new ParsingTableBuilder(grammar, predictCalculator);
         ParsingTable parsingTable = parsingTableBuilder.getParsingTable();
 
-        //obtiene los tokens del Scanner
+        // Obtiene los tokens del Scanner
         List<Token> tokensTrue = Scanner.scan();
 
         // Crear el parser y ejecutar el análisis sintáctico
-        Parser2 parser = new Parser2(tokensTrue, grammar.getProductions(), parsingTable, grammar);
+        Parser2 parser = new Parser2(tokensTrue, parsingTable, grammar);
         parser.parse();
-
-
-        
     }
 }
 

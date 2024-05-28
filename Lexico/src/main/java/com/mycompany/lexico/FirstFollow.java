@@ -4,17 +4,17 @@ import java.util.*;
 
 public class FirstFollow {
     private Grammar grammar;
-    private Map<String, Set<String>> firstSets;
-    private Map<String, Set<String>> followSets;
+    private Map<String, Set<String>> first;
+    private Map<String, Set<String>> follow;
 
     public FirstFollow(Grammar grammar) {
         this.grammar = grammar;
-        firstSets = new HashMap<>();
-        followSets = new HashMap<>();
+        first = new HashMap<>();
+        follow = new HashMap<>();
 
         for (String nonTerminal : grammar.getNonTerminals()) {
-            firstSets.put(nonTerminal, new HashSet<>());
-            followSets.put(nonTerminal, new HashSet<>());
+            first.put(nonTerminal, new HashSet<>());
+            follow.put(nonTerminal, new HashSet<>());
         }
     }
 
@@ -22,74 +22,69 @@ public class FirstFollow {
         boolean changed;
         do {
             changed = false;
-            for (Producción production : grammar.getProductions()) 
-            {
-                System.out.print("X");
-                String nonTerminal = production.getNoTerminal();
-                List<String> sequence = production.getSecuencia();
+            for (String family : grammar.productionFamilies.keySet()) {
+                List<Producción> productions = grammar.getProductionsForFamily(family);
+                for (Producción production : productions) {
+                    String nonTerminal = production.getNoTerminal();
+                    List<String> sequence = production.getSecuencia();
+                    Set<String> firstSet = first.get(nonTerminal);
 
-                int initialSize = firstSets.get(nonTerminal).size();
-                firstSets.get(nonTerminal).addAll(first(sequence));
-                if (firstSets.get(nonTerminal).size() > initialSize) 
-                {
-                    changed = true;
+                    int originalSize = firstSet.size();
+                    firstSet.addAll(calculateFirstForSequence(sequence));
+                    if (firstSet.size() > originalSize) {
+                        changed = true;
+                    }
                 }
             }
         } while (changed);
     }
 
-    public Set<String> first(List<String> sequence) {
+    public Set<String> calculateFirstForSequence(List<String> sequence) {
         Set<String> result = new HashSet<>();
-        if (sequence.isEmpty()) {
-            result.add("ε");
-            return result;
-        }
-
-        String firstSymbol = sequence.get(0);
-        if (grammar.getTerminals().contains(firstSymbol)) {
-            result.add(firstSymbol);
-        } else {
-            result.addAll(firstSets.get(firstSymbol));
-            for (int i = 1; i < sequence.size() && firstSets.get(sequence.get(i - 1)).contains("ε"); i++) {
-                result.addAll(firstSets.get(sequence.get(i)));
-                result.remove("ε");
-            }
-            if (sequence.stream().allMatch(symbol -> firstSets.get(symbol).contains("ε"))) {
-                result.add("ε");
+        for (String symbol : sequence) {
+            if (grammar.getTerminals().contains(symbol)) {
+                result.add(symbol);
+                break;
+            } else if (grammar.getNonTerminals().contains(symbol)) {
+                Set<String> firstSet = first.get(symbol);
+                result.addAll(firstSet);
+                if (!firstSet.contains("ε")) {
+                    break;
+                }
             }
         }
         return result;
     }
 
     public void calculateFollow() {
-        followSets.get(grammar.getStartSymbol()).add("$");
+        follow.get(grammar.getStartSymbol()).add("EOF");
         boolean changed;
         do {
             changed = false;
-            for (Producción production : grammar.getProductions()) {
-                String nonTerminal = production.getNoTerminal();
-                List<String> sequence = production.getSecuencia();
+            for (String family : grammar.productionFamilies.keySet()) {
+                List<Producción> productions = grammar.getProductionsForFamily(family);
+                for (Producción production : productions) {
+                    String nonTerminal = production.getNoTerminal();
+                    List<String> sequence = production.getSecuencia();
+                    for (int i = 0; i < sequence.size(); i++) {
+                        String symbol = sequence.get(i);
+                        if (grammar.getNonTerminals().contains(symbol)) {
+                            Set<String> followSet = follow.get(symbol);
+                            int originalSize = followSet.size();
 
-                for (int i = 0; i < sequence.size(); i++) {
-                    String symbol = sequence.get(i);
-                    if (grammar.getNonTerminals().contains(symbol)) {
-                        Set<String> followSet = followSets.get(symbol);
-                        int initialSize = followSet.size();
-
-                        if (i + 1 < sequence.size()) {
-                            List<String> restSequence = sequence.subList(i + 1, sequence.size());
-                            Set<String> firstOfRest = first(restSequence);
-                            followSet.addAll(firstOfRest);
-                            followSet.remove("ε");
-                            if (firstOfRest.contains("ε")) {
-                                followSet.addAll(followSets.get(nonTerminal));
+                            if (i + 1 < sequence.size()) {
+                                List<String> remainder = sequence.subList(i + 1, sequence.size());
+                                followSet.addAll(calculateFirstForSequence(remainder));
+                                followSet.remove("ε");
                             }
-                        } else {
-                            followSet.addAll(followSets.get(nonTerminal));
-                        }
 
-                        if (followSet.size() > initialSize) {
-                            changed = true;
+                            if (i + 1 == sequence.size() || calculateFirstForSequence(sequence.subList(i + 1, sequence.size())).contains("ε")) {
+                                followSet.addAll(follow.get(nonTerminal));
+                            }
+
+                            if (followSet.size() > originalSize) {
+                                changed = true;
+                            }
                         }
                     }
                 }
@@ -97,11 +92,11 @@ public class FirstFollow {
         } while (changed);
     }
 
-    public Map<String, Set<String>> getFirstSets() {
-        return firstSets;
+    public Set<String> getFirst(String nonTerminal) {
+        return first.get(nonTerminal);
     }
 
-    public Map<String, Set<String>> getFollowSets() {
-        return followSets;
+    public Set<String> getFollow(String nonTerminal) {
+        return follow.get(nonTerminal);
     }
 }

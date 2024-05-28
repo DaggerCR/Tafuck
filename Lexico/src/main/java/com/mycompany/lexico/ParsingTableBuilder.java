@@ -12,17 +12,18 @@ public class ParsingTableBuilder {
         this.grammar = grammar;
         this.predictCalculator = predictCalculator;
         this.parsingTable = new ParsingTable();
-
-        buildTable();
+        this.parsingTable.initialize(grammar.getNonTerminals(), grammar.getTerminals());
+        buildParsingTable();
     }
 
-    private void buildTable() {
-        Map<Producción, Set<String>> predictSets = predictCalculator.getPredictSets();
-        for (Map.Entry<Producción, Set<String>> entry : predictSets.entrySet()) {
-            Producción production = entry.getKey();
-            Set<String> predictSet = entry.getValue();
-            for (String terminal : predictSet) {
-                parsingTable.addEntry(production.getNoTerminal(), terminal, grammar.getProductions().indexOf(production));
+    private void buildParsingTable() {
+        for (String family : grammar.productionFamilies.keySet()) {
+            List<Producción> productions = grammar.getProductionsForFamily(family);
+            for (Producción production : productions) {
+                Set<String> predictSet = predictCalculator.getPredict(production);
+                for (String terminal : predictSet) {
+                    parsingTable.addEntry(production.getNoTerminal(), terminal, production);
+                }
             }
         }
     }

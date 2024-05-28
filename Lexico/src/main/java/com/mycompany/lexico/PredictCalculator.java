@@ -5,34 +5,32 @@ import java.util.*;
 
 public class PredictCalculator {
     private Grammar grammar;
-    private FirstFollow firstFollowCalculator;
-    private Map<Producción, Set<String>> predictSets;
+    private FirstFollow firstFollow;
+    private Map<Producción, Set<String>> predict;
 
-    public PredictCalculator(Grammar grammar, FirstFollow firstFollowCalculator) {
+    public PredictCalculator(Grammar grammar, FirstFollow firstFollow) {
         this.grammar = grammar;
-        this.firstFollowCalculator = firstFollowCalculator;
-        this.predictSets = new HashMap<>();
-
-        for (Producción production : grammar.getProductions()) {
-            predictSets.put(production, new HashSet<>());
-        }
+        this.firstFollow = firstFollow;
+        predict = new HashMap<>();
     }
 
     public void calculatePredict() {
-        for (Producción production : grammar.getProductions()) {
-            List<String> sequence = production.getSecuencia();
-            Set<String> firstSet = firstFollowCalculator.first(sequence);
-
-            if (firstSet.contains("ε")) {
-                firstSet.remove("ε");
-                firstSet.addAll(firstFollowCalculator.getFollowSets().get(production.getNoTerminal()));
+        for (String family : grammar.productionFamilies.keySet()) {
+            List<Producción> productions = grammar.getProductionsForFamily(family);
+            for (Producción production : productions) {
+                Set<String> predictSet = new HashSet<>();
+                List<String> sequence = production.getSecuencia();
+                predictSet.addAll(firstFollow.calculateFirstForSequence(sequence));
+                if (predictSet.contains("ε")) {
+                    predictSet.remove("ε");
+                    predictSet.addAll(firstFollow.getFollow(production.getNoTerminal()));
+                }
+                predict.put(production, predictSet);
             }
-
-            predictSets.get(production).addAll(firstSet);
         }
     }
 
-    public Map<Producción, Set<String>> getPredictSets() {
-        return predictSets;
+    public Set<String> getPredict(Producción production) {
+        return predict.get(production);
     }
 }
