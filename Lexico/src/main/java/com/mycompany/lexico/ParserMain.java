@@ -102,7 +102,22 @@ public class ParserMain {
         Parser2 parser = new Parser2(tokensTrue, grammar.getProductions(), parsingTable, grammar);
         parser.parse();
 
-
+        /*for (int i = 0; i < tokensTrue.size(); i++) {
+            System.out.println(tokensTrue.get(i).toString2());
+        }*/
+        
+        SymbolTable tabla = new SymbolTable();
+        
+        try {
+            tabla.fillTable(tokensTrue); 
+        } catch (SymbolTableCollisionException e) {
+            System.out.println(e.toString());
+        }
+        
+        
+        System.out.println("---------------Tabla de simbolos---------------");
+        tabla.printTable();
+        //System.out.println(tokensTrue.size());
         
     }
 }

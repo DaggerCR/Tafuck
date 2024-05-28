@@ -25,6 +25,7 @@ public class Token
     }
 
     public String getLexema() {
+        //System.out.println(lexema.length());
         return lexema;
     }
 
