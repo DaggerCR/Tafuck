@@ -51,12 +51,7 @@ public class ParserMain {
         grammar.addTerminal("* ");
         grammar.addTerminal("- ");
         grammar.addTerminal("OPERADOR_ENTERO");
-        
-        
-        
-        
-        
-        
+                
         //nombre del programa
         grammar.addProduction("<S>", Arrays.asList("nhequéquequé","IDENTIFICADOR","TERMINADOR"));
         // Sección de constantes
@@ -80,7 +75,15 @@ public class ParserMain {
         
         //operador entero
         grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","OPERADOR_ENTERO","IDENTIFICADOR","TERMINADOR"));
-
+        
+        grammar.addNonTerminal("<salidaTipo>");       
+        grammar.addTerminal("lacchátené");
+        grammar.addTerminal("SALIDA");
+        
+               
+        grammar.addProduction("<S>", Arrays.asList("SALIDA","IDENTIFICADOR","TERMINADOR"));
+        grammar.addProduction("<salidaTipo>", Arrays.asList("lacchátené"));
+        
 //----------------------------------------------------------
         // Calcular First y Follow
         FirstFollow firstFollowCalculator = new FirstFollow(grammar);

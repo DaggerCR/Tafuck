@@ -1,6 +1,0 @@
-octará 
-
-	## arrá instrucción prefija que declara x1 como constante, en esta sección no se pone el tipo
-	arrá x1 45;
-	arrá x2 'd';
-	arrá x3 maíca; ##maica es False

@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class SymbolTable {
     Hashtable<ScopeIdentifier, SymbolInfo> globalSymbolTable;
+    private String response = "";
     
     SymbolTable() {
             this.globalSymbolTable = new Hashtable<>();
@@ -50,6 +51,15 @@ public class SymbolTable {
         // Método para imprimir la tabla de símbolos
         public void printTable() {
             globalSymbolTable.forEach((k, v) -> System.out.println(k + " -> " + v));
+        }
+        
+        public String mensaje () 
+        {
+            // me rendí y no pude hacer que funcionara (porque hay que llamar al método fillTable primero)
+            StringBuilder responseLocal = new StringBuilder();
+            globalSymbolTable.forEach((k, v) -> responseLocal.append(k).append(" -> ").append(v).append("\n"));
+            return response = responseLocal.toString();
+            
         }
         
         public Hashtable<ScopeIdentifier, SymbolInfo> fillTable(List<Token> tokensTrue) throws SymbolTableCollisionException{

@@ -9,6 +9,7 @@ public class Parser2 {
     private Stack<String> pila;
     private int currentIndex;
     private Grammar grammar;
+    private String response = "";
 
     public Parser2(List<Token> tokens, List<Producción> producciones, ParsingTable parsingTable, Grammar grammar) {
         this.tokens = tokens;
@@ -17,6 +18,12 @@ public class Parser2 {
         this.pila = new Stack<>();
         this.currentIndex = 0;
         this.grammar = grammar;
+    }
+    
+    public String mensaje()
+    {
+        parse();
+        return response;
     }
 
     private Token dameToken() {
@@ -35,6 +42,8 @@ public class Parser2 {
         System.err.println("\n\n|------------------------------");
         System.err.println("| Error sintactico: se esperaba '" + esperado + "' pero se encontro '" + tokenActual.getTipoString() + "' ("+ tokenActual.getLexema() +") en la linea " + tokenActual.getLinea() + ", columna " + tokenActual.getColumna());
         System.err.println("|------------------------------\n\n");
+        
+        response = response + "\n\n|------------------------------" + "\n| Error sintactico: se esperaba '" + esperado + "' pero se encontro '" + tokenActual.getTipoString() + "' ("+ tokenActual.getLexema() +") en la linea " + tokenActual.getLinea() + ", columna " + tokenActual.getColumna() + "\n|------------------------------\n\n";
     }
 
     // método principal que se encarga de hacer el análisis sintáctico
@@ -55,22 +64,29 @@ public class Parser2 {
                 tokenActual = dameToken();
             }
             String elementoActual = pila.pop();
-            System.out.print("\nElemento en gramatica en pila: " + elementoActual + " --- Token actual: "+ tokenActual.getTipoString() + " -> " + tokenActual.getLexema());
+            System.out.print("\n\nElemento en gramatica en pila: " + elementoActual + " --- Token actual: "+ tokenActual.getTipoString() + " -> " + tokenActual.getLexema());
+            response = response + "\n\nElemento en gramatica en pila: " + elementoActual + " --- Token actual: "+ tokenActual.getTipoString() + " -> " + tokenActual.getLexema();
             if (esTerminal(elementoActual)) 
             {
-                System.out.print("\nEl elemento en pila es una terminal");
+                System.out.print("\n\nEl elemento en pila es una terminal");
+                response = response + "\n\nEl elemento en pila es una terminal";
                 if (elementoActual.equals(tokenActual.getTipoString()) || elementoActual.equals(tokenActual.getLexema())) 
                 {
-                    System.out.println("\nElemento actual == Tipo Token: "+ elementoActual.equals(tokenActual.getTipoString()) + " ---- Elemento Actual == Lexema: " + elementoActual.equals(tokenActual.getLexema()));
+                    System.out.println("\n\nElemento actual == Tipo Token: "+ elementoActual.equals(tokenActual.getTipoString()) + 
+                            " ---- Elemento Actual == Lexema: " + elementoActual.equals(tokenActual.getLexema()));
+                    response = response + "\n\nElemento actual == Tipo Token: "+ elementoActual.equals(tokenActual.getTipoString()) + " ---- Elemento Actual == Lexema: " + elementoActual.equals(tokenActual.getLexema());
                     tokenActual = dameToken();
                 } else {
-                    System.out.println("\nSi es un terminal pero no hubo match");
+                    
+                    System.out.println("\n\nSi es un terminal pero no hubo match");
+                    response = response + "\\nnSi es un terminal pero no hubo match";
                     errorSintactico(elementoActual, tokenActual);
                     //return;
                 }
             } else {
                 
-                System.out.println("\nEs un NO terminal, se hace recorre la gramática");
+                System.out.println("\n\nEs un NO terminal, se hace recorre la gramática");
+                response = response + "\n\nEs un NO terminal, se hace recorre la gramática";
                 List<Producción> posiblesProducciones = grammar.getProductionsForNonTerminal(elementoActual);
                 boolean matchFound = false;
 
@@ -98,6 +114,7 @@ public class Parser2 {
                     else
                     {
                         System.out.println("\nEs un no terminal, no hubo match");
+                        response = response + "\nEs un no terminal, no hubo match";
                         errorSintactico(elementoActual, tokenActual);
                         return;
                     }
@@ -110,6 +127,7 @@ public class Parser2 {
             System.out.println("\n|-------------------------------------------|");
             System.out.println("| Analisis sintactico completado con exito. |");
             System.out.println("|-------------------------------------------|");
+            response = response + "\n|-------------------------------------------|" + "\n" + "| Analisis sintactico completado con exito. |" + "\n" +"|-------------------------------------------|";
         } else {
             System.out.println("Último token: " + tokenActual.getTipoString());
             errorSintactico("EOF", tokenActual);

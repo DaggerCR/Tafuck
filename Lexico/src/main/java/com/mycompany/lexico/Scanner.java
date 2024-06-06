@@ -39,6 +39,24 @@ public class Scanner {
         return tokens;
     }
     
+    public List<Token> scan2(String sourceCode) {
+        List<Token> tokens = new ArrayList<>();
+        try {
+            archivoTaf2 = sourceCode;
+            Scanner scanner = new Scanner(archivoTaf2);
+            Token token;
+            do {
+                token = scanner.demeToken();
+                Token tokenObj = new Token(token.getTipo(),token.getLexema(),token.getLinea(),token.getColumna()); 
+                tokens.add(tokenObj);
+            } while (token.getTipo() != TipoToken.EOF);
+            scanner.finalizeScanner();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return tokens;
+    }
+    
     
     private BufferedReader reader;
     private char currentChar;
@@ -46,6 +64,7 @@ public class Scanner {
     private int currentColumn = 0;
     private int errorCount = 0;
     private static String archivoTaf = "C:\\Tafac\\miPrograma.taf"; //super importante de asegurarse que exista
+    private static String archivoTaf2 = "C:\\Tafac\\miPrograma.taf"; //super importante de asegurarse que exista
     private static String archivoHTML = "C:\\Tafac\\tokens.html"; // esto también, pero el tokens.html no es obligatorio que esté en la carpeta, ya que se genera cuando se compila
     private int tipoCount = 0;
     private int tokensCount = 0;
@@ -53,6 +72,10 @@ public class Scanner {
     public Scanner(String fileName) throws IOException {
         reader = new BufferedReader(new FileReader(fileName));
         currentChar = (char) reader.read();
+    }
+
+    Scanner() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     // cierra el reader
@@ -190,6 +213,10 @@ public class Scanner {
                 case "lauc" ->
                 {
                     return new Token(TipoToken.HALT, lexemaStr, line, column);
+                }
+                case "lacchátené" ->
+                {
+                    return new Token(TipoToken.SALIDA, lexemaStr, line, column);
                 }
                 default -> 
                 {

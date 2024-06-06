@@ -42,5 +42,6 @@ public enum TipoToken {
     COHERCION,
     COMENTARIO,
     COMA,
+    SALIDA
     
 }
