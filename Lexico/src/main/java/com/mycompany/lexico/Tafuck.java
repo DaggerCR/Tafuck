@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -161,7 +162,174 @@ public class Tafuck extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        this.Salida.setText("");
+        String portada;
+        String inicio;
+        String codigo;
+        String datos1;
+        String datos2;
+        String pila;
+        String halt;
+        String fin;
+        String llamadaImprimir = "";
+        String variables = "";
+        String asignaciones = "\n\n";
+        String salidas = "\n";
+        String sumas = "";
+        String restas = "";
+        
+        String userHome = System.getProperty("user.home");
+        String directoryPath = userHome + "/Documents/Salida_Tafac";
+        String filePath = directoryPath + "/output.asm";
+        
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs(); 
+        }
+
+        portada = "; El proyecto " + this.currentFile + " es hecho por Daniel Sequeira y kenneth Palacios\n\n";
+
+        datos1 = "datos segment\n    buffer db 6 dup (?) ; Buffer para imprimir numeros \n";
+        datos2 = "datos ends\n";
+
+        pila = """
+               \n
+               pila segment stack 'stack'
+                   dw 256 dup (?) ; Definición de la pila
+               pila ends
+               """;
+
+        codigo = """
+                 \n
+                 codigo segment
+                     assume cs:codigo, ds:datos, ss:pila
+                 """;
+
+        inicio = """
+                \n
+                inicio:
+                    mov ax, ds    ; ponemos al ES a apuntar al inicio del PSP
+                    mov es, ax
+                
+                    mov ax, datos  ; El DS que apuntaba al PSP se debe poner a apuntar al segmento de datos para 
+                    mov ds, ax     ; poder usar las variables.
+                
+                    mov ax, pila
+                    mov ss, ax""";
+
+        halt = """ 
+              \n
+                  mov ax, 4C00h  
+                  int 21h  
+              """;
+        fin = """
+              
+              codigo ends
+              end inicio
+              """;
+
+        List<String> variablesUsadas;
+        variablesUsadas = new ArrayList<>();
+        
+        List<String> variablesIndices;
+        variablesIndices = new ArrayList<>();
+        
+        // ciclo para crear variables
+        for (int i = 0; i < tokensAux.size(); i++) {
+            Token token = tokensAux.get(i);
+
+            switch (token.getTipoString()) {
+                case "IDENTIFICADOR":
+                    String newVariable = token.getLexema();
+                    if(!variablesUsadas.contains(newVariable))
+                    {
+                        variables = variables + "    " + newVariable + "_var" + i +" dw ? \n";
+                        variablesUsadas.add(newVariable);
+                        variablesIndices.add(""+i);
+                    }
+                case "ASIGNACION":
+                    if (token.getLexema().equals("nicó") || token.getLexema().equals(":= ")) {
+                        Token tokenPre = tokensAux.get(i - 1);
+                        Token tokenPost = tokensAux.get(i + 1);
+                        asignaciones = asignaciones + "   mov word ptr " + tokenPre.getLexema() + "_var" + (i - 1) + ", " + tokenPost.getLexema() + "\n";
+                    }
+                    if (token.getLexema().equals("arrá")) {
+                        Token tokenPost = tokensAux.get(i + 1);
+                        Token tokenPostPost = tokensAux.get(i + 2);
+                        asignaciones = asignaciones + "   mov word ptr " + tokenPost.getLexema() + "_var" + (i + 1) + ", " + tokenPostPost.getLexema() + "\n";
+                    }
+                    if (token.getLexema().equals("+= ")) {
+                        Token tokenPre = tokensAux.get(i - 1);
+                        Token tokenPost = tokensAux.get(i + 1);
+                        
+                        int index = variablesUsadas.indexOf(tokenPre.getLexema());
+                        sumas = sumas + "\n   add " + tokenPre.getLexema() + "_var" + (variablesIndices.get(index))+"," +tokenPost.getLexema() +"\n";
+                    }
+                    if (token.getLexema().equals("-= ")) {
+                         Token tokenPre = tokensAux.get(i - 1);
+                        Token tokenPost = tokensAux.get(i + 1);
+                        
+                        int index = variablesUsadas.indexOf(tokenPre.getLexema());
+                        sumas = sumas + "\n   sub " + tokenPre.getLexema() + "_var" + (variablesIndices.get(index))+"," +tokenPost.getLexema() +"\n";
+                    }
+                case "SALIDA":
+                    if (token.getLexema().equals("lacchátené")) {
+                        Token tokenPost = tokensAux.get(i + 1);
+                        int index = variablesUsadas.indexOf(tokenPost.getLexema());
+                        System.out.println(""+tokenPost.getLexema() + " " + variablesIndices.get(index));
+                        
+                        salidas = salidas + "imprime_" + tokenPost.getLexema() + "_var" + (variablesIndices.get(index))+":\n";
+                        salidas = salidas + "    mov ax,"+ tokenPost.getLexema() + "_var" + (variablesIndices.get(index)) +"       \n" +
+                            "    mov bx, 10         \n" +
+                            "    lea si, buffer     \n" +
+                            "    mov cx, 0 ";
+                        salidas = salidas + "\nconv_loop:\n" +
+                            "    xor dx, dx         \n" +
+                            "    div bx             \n" +
+                            "    add dl, '0'        \n" +
+                            "    mov [si], dl       \n" +
+                            "    inc si             \n" +
+                            "    inc cx             \n" +
+                            "    or ax, ax          \n" +
+                            "    jnz conv_loop      \n" +
+                            "\n" +
+                            "    lea si, buffer     \n" +
+                            "    add si, cx         \n" +
+                            "    dec si             \n" +
+                            "\n" +
+                            "print_loop:\n" +
+                            "    mov dl, [si]       ; Cargar el siguiente dígito en DL\n" +
+                            "    mov ah, 02h        ; Función DOS para imprimir un carácter\n" +
+                            "    int 21h            ; Llamar a la interrupción DOS\n" +
+                            "    dec si             ; Retroceder un byte\n" +
+                            "    loop print_loop    ; Repetir hasta que se impriman todos los dígitos\n" +
+                            "\n" +
+                            "    ret                ; Volver al programa principal";
+                        
+                        llamadaImprimir = llamadaImprimir + "\n   call imprime_" +tokenPost.getLexema() + "_var" + (variablesIndices.get(index));
+
+                    }
+
+            }
+        }
+        this.Salida.setText(portada
+                + datos1 + variables + datos2 + pila + codigo
+                + inicio + asignaciones + sumas +llamadaImprimir + halt +salidas + fin);
+
+        String content = this.Salida.getText();
+
+        // Especificar la ruta y el nombre del archivo
+
+        try (FileWriter writer = new FileWriter(new File(filePath))) {
+            // Escribir el contenido en el archivo
+            writer.write(content);
+            // Mostrar un mensaje de éxito
+            JOptionPane.showMessageDialog(this, "Archivo guardado exitosamente en " + filePath);
+        } catch (IOException e) {
+            // Mostrar un mensaje de error en caso de fallo
+            JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void AbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbrirActionPerformed
@@ -209,6 +377,8 @@ public class Tafuck extends javax.swing.JFrame {
                 // Imprimir los tokens en la consola
                 for (int i = 0; i < tokens.size(); i++) {
                     Token token = tokens.get(i);
+                    if(token.getTipoString().equals("ERROR"))
+                         this.Salida.setText(this.Salida.getText()+"\n- - - - - - ->");
                     System.out.println("- Tipo: " + token.getTipoString()
                             + "  Lexema: " + token.getLexema() + "   Fila: " + token.getLinea() + "   Columna: " + token.getColumna());
                     this.Salida.setText(this.Salida.getText() + "\n"
@@ -229,7 +399,8 @@ public class Tafuck extends javax.swing.JFrame {
                                             NOTA: siempre ponga un salto de línea al final del código
                                             NOTA 2: cargue siempre un archivo antes de empezar a programar
                                             NOTA 3: antes de ejecutar una etapa siempre se guardarán los cambios hechos
-                                            NOTA 4: Antes de ejecutar el Semántico debe ejecutar el Parser o el Scanner
+                                            NOTA 4: Antes de ejecutar el Semántico o la generación de código debe ejecutar el Parser y el Scanner
+                                            NOTA 5: Cuando se genera código, este guarda el archivo .asm en una carpeta nueva en documentos llamada Salida_Tafac
                                             
                                             Para cargar un archivo en el editor presione Archivo → Abrir
                                             Para Guardar el texto, presione Archivo → Guardar
@@ -241,10 +412,10 @@ public class Tafuck extends javax.swing.JFrame {
         this.Salida.setText("");
         Grammar grammar = new Grammar();
         grammar.setStartSymbol("<S>");
-        
+
         grammar.addNonTerminal("<S>");
         grammar.addNonTerminal("<loop-constantes>");
-        grammar.addNonTerminal("<literal>");         
+        grammar.addNonTerminal("<literal>");
         grammar.addTerminal("octará");
         grammar.addTerminal("arrá");
         grammar.addTerminal("IDENTIFICADOR");
@@ -254,15 +425,15 @@ public class Tafuck extends javax.swing.JFrame {
         grammar.addTerminal("COMA");
         grammar.addTerminal("TERMINADOR");
         grammar.addTerminal("TIPO_DATO");
-        
+
         grammar.addNonTerminal("<loop-definicion>");
         grammar.addTerminal("aíca");
         grammar.addTerminal("putú");
-        
+
         grammar.addTerminal("tilhtilh");
         grammar.addTerminal("nicó");
         grammar.addNonTerminal("<seccion-variables>");
-        
+
         grammar.addTerminal("nhequéquequé");
 
         //grammar.addNonTerminal("<>");
@@ -272,46 +443,48 @@ public class Tafuck extends javax.swing.JFrame {
         grammar.addTerminal("*= ");
         grammar.addTerminal("-= ");
         grammar.addTerminal("ASIGNACION");
-        
+
         grammar.addTerminal("% ");
         grammar.addTerminal("+ ");
         grammar.addTerminal("/ ");
         grammar.addTerminal("* ");
         grammar.addTerminal("- ");
         grammar.addTerminal("OPERADOR_ENTERO");
-                
+
         //nombre del programa
-        grammar.addProduction("<S>", Arrays.asList("nhequéquequé","IDENTIFICADOR","TERMINADOR"));
+        grammar.addProduction("<S>", Arrays.asList("nhequéquequé", "IDENTIFICADOR", "TERMINADOR"));
         // Sección de constantes
-        grammar.addProduction("<S>", Arrays.asList("octará","arrá","<loop-constantes>"));
+        grammar.addProduction("<S>", Arrays.asList("octará", "arrá", "<loop-constantes>"));
         //grammar.addProduction("<loop-constantes>", Arrays.asList("IDENTIFICADOR", "<literal>", "COMA", "<loop-constantes>"));
         grammar.addProduction("<loop-constantes>", Arrays.asList("IDENTIFICADOR", "<literal>", "TERMINADOR"));
         grammar.addProduction("<literal>", Arrays.asList("LITERAL_FLOTANTE"));
         grammar.addProduction("<literal>", Arrays.asList("LITERAL_BOOLEANA"));
         grammar.addProduction("<literal>", Arrays.asList("LITERAL_ENTERO"));
         
+        grammar.addProduction("<S>", Arrays.asList("arrá", "<loop-constantes>"));
+
         //sección de tipos
-        grammar.addProduction("<S>", Arrays.asList("aíca","<loop-definicion>"));
-        grammar.addProduction("<loop-definicion>", Arrays.asList("putú","IDENTIFICADOR","TIPO_DATO","TERMINADOR"));
-        
+        grammar.addProduction("<S>", Arrays.asList("aíca", "<loop-definicion>"));
+        grammar.addProduction("<loop-definicion>", Arrays.asList("putú", "IDENTIFICADOR", "TIPO_DATO", "TERMINADOR"));
+
         //sección de variables
-        grammar.addProduction("<S>", Arrays.asList("tilhtilh","<seccion-variables>"));
-        grammar.addProduction("<seccion-variables>", Arrays.asList("TIPO_DATO","IDENTIFICADOR","nicó","<literal>","TERMINADOR"));
-        
+        grammar.addProduction("<S>", Arrays.asList("tilhtilh", "<seccion-variables>"));
+        grammar.addProduction("<seccion-variables>", Arrays.asList("TIPO_DATO", "IDENTIFICADOR", "nicó", "<literal>", "TERMINADOR"));
+        grammar.addProduction("<S>", Arrays.asList("TIPO_DATO", "IDENTIFICADOR", "nicó", "<literal>", "TERMINADOR"));
+
         //asiganaciones
-        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","ASIGNACION","<literal>"));
-        
+        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR", "ASIGNACION", "<literal>", "TERMINADOR"));
+
         //operador entero
-        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR","OPERADOR_ENTERO","IDENTIFICADOR","TERMINADOR"));
-        
-        grammar.addNonTerminal("<salidaTipo>");       
+        grammar.addProduction("<S>", Arrays.asList("IDENTIFICADOR", "OPERADOR_ENTERO", "IDENTIFICADOR", "TERMINADOR"));
+
+        grammar.addNonTerminal("<salidaTipo>");
         grammar.addTerminal("lacchátené");
         grammar.addTerminal("SALIDA");
-        
-               
-        grammar.addProduction("<S>", Arrays.asList("SALIDA","IDENTIFICADOR","TERMINADOR"));
+
+        grammar.addProduction("<S>", Arrays.asList("SALIDA", "IDENTIFICADOR", "TERMINADOR"));
         grammar.addProduction("<salidaTipo>", Arrays.asList("lacchátené"));
-        
+
 //----------------------------------------------------------
         // Calcular First y Follow
         FirstFollow firstFollowCalculator = new FirstFollow(grammar);
@@ -330,32 +503,31 @@ public class Tafuck extends javax.swing.JFrame {
         Scanner scanner;
         try {
             scanner = new Scanner(currentFile.toString()); // Asegúrate de que el constructor sea correcto
-             List<Token> tokens = scanner.scan2(currentFile.toString());
-             tokensAux = tokens;
-             Parser2 parser = new Parser2(tokens, grammar.getProductions(), parsingTable, grammar);
-             parser.parse();
-             this.Salida.setText(parser.mensaje());
+            List<Token> tokens = scanner.scan2(currentFile.toString());
+            tokensAux = tokens;
+            Parser2 parser = new Parser2(tokens, grammar.getProductions(), parsingTable, grammar);
+            parser.parse();
+            this.Salida.setText(parser.mensaje());
         } catch (IOException ex) {
             Logger.getLogger(Tafuck.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
 
         // Crear el parser y ejecutar el análisis sintáctico
-        
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         SymbolTable tabla = new SymbolTable();
         this.guardar();
-        this.Salida.setText("");
         try {
-            tabla.fillTable(tokensAux); 
+            tabla.fillTable(tokensAux);
         } catch (SymbolTableCollisionException e) {
             System.out.println(e.toString());
         }
         System.out.println("---------------Tabla de simbolos---------------");
         tabla.printTable();
+        this.Salida.setText("");
+        this.Salida.setText(tabla.getTableAsString());
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

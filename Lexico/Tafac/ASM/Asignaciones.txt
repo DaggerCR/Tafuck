@@ -1,0 +1,4 @@
+caralh filhílhi ejcaracter óri 's';  // Definicion y asignacion al caracter ejcaracter como constante y con valor 's'
+caralh cóye ejarreglo óri <[1,3,5,7,9]>;  // Definicion y asignacion al arreglo ejarreglo como constante y con valor <[1,3,5,7,9]> 
+sulí chátené ejentero óri 10;  // Definicion y asignacion al entero ejentero como variable y con valor 10  
+sulí úji ejespecial óri 10i;  // Definicion y asignacion al dato atómico creativo ejespecial como variable y con valor 10i 

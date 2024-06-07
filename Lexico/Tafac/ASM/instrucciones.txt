@@ -1,0 +1,63 @@
+//intrucciones
+
+//while
+
+pují(suírra) {        //while(true)
+
+  arú(epéme)          //if(false)
+	foróforóye;   //break
+  ótacá               //else
+        taráne;       //continue
+}
+
+
+//switch
+
+lhifiji(var1)          //switch
+{
+	palhá 1:       //case
+		...
+		... 
+	palhá 2:       //case
+		...
+		...
+	quírra:        //default
+		...
+}
+
+
+//do-while | repeat-until
+
+paípaí //repeat 
+{
+	...
+}yajé(condicion); //until
+
+
+//instrucciones creativas
+
+...
+...
+...
+tarráni();
+...
+...
+chequéle();
+
+
+
+//terminar ejecucion
+
+...
+...
+...
+lauc;
+
+//for
+
+ajá i óri 0 ...
+...
+...
+
+
+

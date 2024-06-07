@@ -62,6 +62,13 @@ public class SymbolTable {
             
         }
         
+        public String getTableAsString() 
+        {
+            StringBuilder tableString = new StringBuilder();
+            globalSymbolTable.forEach((k, v) -> tableString.append(k).append(" -> ").append(v).append("\n"));
+            return tableString.toString();
+        }
+        
         public Hashtable<ScopeIdentifier, SymbolInfo> fillTable(List<Token> tokensTrue) throws SymbolTableCollisionException{
             boolean programName = false;
             boolean constSeccion = false;
